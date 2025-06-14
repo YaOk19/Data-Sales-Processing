@@ -8,22 +8,44 @@ def kelompokan(customer_name):
         
          "PT BERSIH AMAN CEMERLANG", "PT MEDIKALOKA PENDIDIKAN PELATIHAN - HERMINA", "PT. BERSIH AMAN CEMERLANG", "INSTITUT KESEHATAN HERMINA", "PERKUMPULAN HERMINA GROUP", 
         "PT CAHAYA BALLROOM KEMAYORAN", "PT INTEGRASI BISNIS DIGITAL", 
-        "KOPERASI HERMINA PODOMORO", "KOKARMINA PUSAT", "CIPUTRA HOSPITAL CITRAGARDEN CITY",   "PT Tera Laboratorium Indonesia"
+        "KOPERASI HERMINA PODOMORO", "KOKARMINA PUSAT", "CIPUTRA HOSPITAL CITRAGARDEN CITY",   "PT Tera Laboratorium Indonesia", "PT.Medikaloka Hermina Tbk", "RS HERMINA PUSAT", "YAYASAN PENDIDIKAN HERMINA", "KOKARMINA  CIAWI", "KOKARMINA  DEPOK", "KOKARMINA  JATINEGARA", "KOKARMINA  KEMAYORAN", "KOKARMINA PODOMORO", "KOKARMINA DAAN MOGOT", "PT. INTEGRASI BISNIS DIGITAL", "PT. CAHAYA BALLROOM KEMAYORAN"
     ]
     kelompok_b = [
-        "KOKARMINA CIRUAS",
+        "PT.AAM BEKASI", "RS HERMINA BEKASI", "RS HERMINA CIBITUNG", "RS HERMINA GALAXY", "RS HERMINA GRANDWISATA", "RS HERMINA KARAWANG", "RS HERMINA MEKARSARI", "KOKARMINA  Bekasi", "KOKARMINA GRANDWISATA", "KOKARMINA KARAWANG", "KOKARMINA BEKASI", "KOKARMINA CIBITUNG", "KOKARMINA GALAXY", "TOKO VILA PLASTIK", "RS MASMITRA", "TOKO PLASTIK 3 BERLIAN", "TOKO OREN MANDIRI", "TOKO SEGAMAS PART,", "TOKO PLASTIK AZQIRRA,", "Toko CV. CAHAYA PELITA SURYA", "TOKO NAJWA NADZIF", "TOKO NADIN PLASTIK,", "", "", ""
     ]
-    
+    kelompok_c = [
+        "PT AAM Jakarta Tangerang", "PT.  AAM TGR", "PT.  ANUGRAH ARGON MEDICA", "PT.  ANUGRAH ARGON MEDICA JK3", "PT AAMPT. ANUGRAH ARGON MEDICA JK3", "RS HERMINA CILEGON", "RS HERMINA BITUNG", "RS HERMINA CILEDUG", "RS HERMINA CIPUTAT", "RS HERMINA CIRUAS", "RS HERMINA PERIUK TANGERANG", "RS HERMINA SERPONG", "RS HERMINA TANGERANG", "KOKARMINA  CIRUAS", "KOKARMINA Bitung", "KOKARMINA  CIPUTAT", "KOKARMINA  TANGERANG", "KOKARMINA CILEGON", "KOKARMINA PERIUK TANGERANG", "KOKARMINA SERPONG", "Kokarmina Tangerang", "TOKO VILA PLASTIK,", "PT AAM,   PT. ANUGRAH ARGON MEDICA JK3", "TOKO MERIAM,", "TOKO AMINAH,", "RS SARI ASIH KARAWACI", "RS SARI ASIH CILEDUG", "TOKO PIJAR"
+    ]
+    # lena
+    kelompok_d = [
+        "RS HERMINA ACEH", "RS HERMINA LAMPUNG", "RS HERMINA MEDAN", "RS HERMINA OPI JAKABARING", "RS HERMINA PADANG", "RS HERMINA PALEMBANG", "RS HERMINA PEKANBARU", "PT Bersih Aman Cemerlang", "KOKARMINA ACEH"
+    ]
+    # gita
+    kelompok_e = [
+        "RS HERMINA ARCAMANIK", "RS HERMINA SOREANG", "RS HERMINA PASTEUR BANDUNG", "RS HERMINA SOREANG", "RS HERMINA SUKABUMI", "RS HERMINA TASIKMALAYA", "KOKARMINA  PASTEUR BANDUNG", "KOKARMINA SOREANG"
+    ]
+    # gita jateng
+    kelompok_f = [
+        "RS HERMINA BANYUMANIK", "RS HERMINA MADIUN", "RS HERMINA MALANG TANGKUBANPRAHU", "RS HERMINA MUTIARA BUNDA SALATIGA", "RS HERMINA PANDANARAN", "RS HERMINA PASURUAN", "RS HERMINA PEKALONGAN", "RS HERMINA PURWOKERTO", "RS HERMINA WONOGIRI", "RS HERMINA YOGYA", "RS HERMINA SOLO", "KOKARMINA  MADIUN", "KOKARMINA  PASURUAN"
+    ]
     if customer_name in kelompok_a:
         return 'Lius'
     elif customer_name in kelompok_b:
         return 'Eva'
+    elif customer_name in kelompok_c:
+        return 'Rius'
+    elif customer_name in kelompok_d:
+        return 'Lena'
+    elif customer_name in kelompok_e:
+        return 'Gita'
+    elif customer_name in kelompok_f:
+        return 'Gita Jateng'
     else:
         return 'Lainnya'
 
 # Membaca file CSV atau Excel yang diunggah
 def upload_file():
-    uploaded_file = st.file_uploader("Upload CSV", type=["csv", "xlsx"])
+    uploaded_file = st.file_uploader("Upload CSV or Excel file", type=["csv", "xlsx"])
     if uploaded_file is not None:
         if uploaded_file.name.endswith('csv'):
             df = pd.read_csv(uploaded_file)
@@ -70,7 +92,14 @@ def main():
 
     if df_grouped is not None:
         st.subheader("Processed Data")
-        st.write(df_grouped)
+
+        # Tampilkan tabel berdasarkan kelompok
+        kelompok_list = df_grouped['Nama Sales'].unique()
+        
+        for kelompok in kelompok_list:
+            st.subheader(f"Table for {kelompok}")
+            df_kelompok = df_grouped[df_grouped['Nama Sales'] == kelompok]
+            st.write(df_kelompok)
 
         # Menyediakan opsi untuk mendownload hasilnya
         st.download_button(
