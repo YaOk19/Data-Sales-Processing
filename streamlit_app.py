@@ -23,7 +23,7 @@ def kelompokan(customer_name):
 
 # Membaca file CSV atau Excel yang diunggah
 def upload_file():
-    uploaded_file = st.file_uploader("Upload CSV or Excel file", type=["csv", "xlsx"])
+    uploaded_file = st.file_uploader("Upload CSV", type=["csv", "xlsx"])
     if uploaded_file is not None:
         if uploaded_file.name.endswith('csv'):
             df = pd.read_csv(uploaded_file)
