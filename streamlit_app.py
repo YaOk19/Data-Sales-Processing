@@ -1,151 +1,84 @@
-import streamlit as st
 import pandas as pd
-import math
-from pathlib import Path
+import streamlit as st
 
-# Set the title and favicon that appear in the Browser's tab bar.
-st.set_page_config(
-    page_title='GDP dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
-)
+# Fungsi untuk mengelompokkan customer
+def kelompokan(customer_name):
+    kelompok_a = [
+        "KOKARMINA BOGOR", "PT. TERA LABORATORIUM INDONESIA", "PT. AAM JK2", "PT. MEDIKA LOKA MANAJEMEN - Hermina", "PT. Pembangun Pemilik Pengelola Menara Proteksi Indonesia (PT. P3MPI)", "RS HERMINA BOGOR", "RS HERMINA CIAWI", "RS HERMINA DAAN MOGOT", "RS HERMINA DEPOK", "RS HERMINA JATINEGARA", "RS HERMINA KEMAYORAN", "RS HERMINA PIK DUA", "RS HERMINA PODOMORO",
+        
+         "PT BERSIH AMAN CEMERLANG", "PT MEDIKALOKA PENDIDIKAN PELATIHAN - HERMINA", "PT. BERSIH AMAN CEMERLANG", "INSTITUT KESEHATAN HERMINA", "PERKUMPULAN HERMINA GROUP", 
+        "PT CAHAYA BALLROOM KEMAYORAN", "PT INTEGRASI BISNIS DIGITAL", 
+        "KOPERASI HERMINA PODOMORO", "KOKARMINA PUSAT", "CIPUTRA HOSPITAL CITRAGARDEN CITY",   "PT Tera Laboratorium Indonesia"
+    ]
+    kelompok_b = [
+        "KOKARMINA CIRUAS",
+    ]
+    
+    if customer_name in kelompok_a:
+        return 'Lius'
+    elif customer_name in kelompok_b:
+        return 'Eva'
+    else:
+        return 'Lainnya'
 
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
-
-@st.cache_data
-def get_gdp_data():
-    """Grab GDP data from a CSV file.
-
-    This uses caching to avoid having to read the file every time. If we were
-    reading from an HTTP endpoint instead of a file, it's a good idea to set
-    a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
-    """
-
-    # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
-
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
-
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
-    )
-
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
-
-    return gdp_df
-
-gdp_df = get_gdp_data()
-
-# -----------------------------------------------------------------------------
-# Draw the actual page
-
-# Set the title that appears at the top of the page.
-'''
-# :earth_americas: GDP dashboard
-
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
-'''
-
-# Add some spacing
-''
-''
-
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
-
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
-    min_value=min_value,
-    max_value=max_value,
-    value=[min_value, max_value])
-
-countries = gdp_df['Country Code'].unique()
-
-if not len(countries):
-    st.warning("Select at least one country")
-
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
-
-''
-''
-''
-
-# Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
-]
-
-st.header('GDP over time', divider='gray')
-
-''
-
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
-)
-
-''
-''
-
-
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
-
-st.header(f'GDP in {to_year}', divider='gray')
-
-''
-
-cols = st.columns(4)
-
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
-
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
+# Membaca file CSV atau Excel yang diunggah
+def upload_file():
+    uploaded_file = st.file_uploader("Upload CSV or Excel file", type=["csv", "xlsx"])
+    if uploaded_file is not None:
+        if uploaded_file.name.endswith('csv'):
+            df = pd.read_csv(uploaded_file)
         else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
+            df = pd.read_excel(uploaded_file, engine='openpyxl')
 
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
+        # Menampilkan nama kolom untuk memeriksa apakah kolom yang diinginkan ada
+        st.write("Nama kolom yang ditemukan dalam file:", df.columns)
+
+        # Normalisasi kolom untuk menangani perbedaan kapitalisasi
+        df.columns = df.columns.str.strip()  # Menghapus spasi yang tidak diinginkan
+        df.columns = df.columns.str.title()  # Menjadikan nama kolom memiliki kapitalisasi yang benar
+
+        # Periksa bahasa dan sesuaikan kolom
+        if 'Jumlah Total' in df.columns:
+            # File CSV Bahasa Indonesia
+            total_amount_column = 'Jumlah Total'
+            customer_name_column = 'Nama Pelanggan'
+        elif 'Total Amount' in df.columns:
+            # File CSV Bahasa Inggris
+            total_amount_column = 'Total Amount'
+            customer_name_column = 'Customer Name'
+        else:
+            st.error("Kolom 'Total Amount' atau 'Jumlah Total' dan 'Nama Pelanggan' atau 'Customer Name' tidak ditemukan.")
+            return None
+
+        # Pemrosesan data
+        df[total_amount_column] = df[total_amount_column].replace({'Rp ': '', ',': ''}, regex=True)
+        df[total_amount_column] = pd.to_numeric(df[total_amount_column], errors='coerce')  # Mengubah menjadi angka
+
+        # Mengelompokkan berdasarkan nama pelanggan
+        df['Kelompok'] = df[customer_name_column].apply(kelompokan)
+        df_grouped = df.groupby(['Kelompok', customer_name_column])[total_amount_column].sum().reset_index()
+        df_grouped = df_grouped.rename(columns={'Kelompok': 'Nama Sales'})
+
+        return df_grouped
+    return None
+
+# Menampilkan hasil
+def main():
+    st.title("Data Sales Processing")
+
+    df_grouped = upload_file()
+
+    if df_grouped is not None:
+        st.subheader("Processed Data")
+        st.write(df_grouped)
+
+        # Menyediakan opsi untuk mendownload hasilnya
+        st.download_button(
+            label="Download Processed Data",
+            data=df_grouped.to_csv(index=False),
+            file_name="processed_sales_data.csv",
+            mime="text/csv"
         )
+        
+if __name__ == "__main__":
+    main()
