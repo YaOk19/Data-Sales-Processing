@@ -4,7 +4,7 @@ import streamlit as st
 # Fungsi untuk mengelompokkan customer
 def kelompokan(customer_name):
     kelompok_a = [
-        "KOKARMINA BOGOR", "PT Bersih Aman Cemerlang", "PT. TERA LABORATORIUM INDONESIA", "PT. AAM JK2", "PT. MEDIKA LOKA MANAJEMEN - Hermina", "PT. Pembangun Pemilik Pengelola Menara Proteksi Indonesia (PT. P3MPI)", "RS HERMINA BOGOR", "RS HERMINA CIAWI", "RS HERMINA DAAN MOGOT", "RS HERMINA DEPOK", "RS HERMINA JATINEGARA", "RS HERMINA KEMAYORAN", "RS HERMINA PIK DUA", "RS HERMINA PODOMORO",
+        "KOKARMINA BOGOR", "PT Medikaloka Pendidikan Pelatihan - Hermina", "PT Bersih Aman Cemerlang", "PT. TERA LABORATORIUM INDONESIA", "PT. AAM JK2", "PT. MEDIKA LOKA MANAJEMEN - Hermina", "Institut Kesehatan Hermina", "PT. Pembangun Pemilik Pengelola Menara Proteksi Indonesia (PT. P3MPI)", "RS HERMINA BOGOR", "RS HERMINA CIAWI", "RS HERMINA DAAN MOGOT", "RS HERMINA DEPOK", "RS HERMINA JATINEGARA", "RS HERMINA KEMAYORAN", "RS HERMINA PIK DUA", "RS HERMINA PODOMORO",
         
          "PT BERSIH AMAN CEMERLANG", "PT MEDIKALOKA PENDIDIKAN PELATIHAN - HERMINA", "PT. BERSIH AMAN CEMERLANG", "INSTITUT KESEHATAN HERMINA", "PERKUMPULAN HERMINA GROUP", 
         "PT CAHAYA BALLROOM KEMAYORAN", "PT INTEGRASI BISNIS DIGITAL", 
